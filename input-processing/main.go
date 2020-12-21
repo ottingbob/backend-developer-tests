@@ -140,7 +140,7 @@ func implementationTwo(reader *bufio.Reader) error {
 
 		// If no newline write to temp file and continue
 		if !bytes.Contains(buf, newLineDelim) {
-			if err := tfi.initTempFile(buf); err != nil {
+			if err := tfi.initOrAppendTempFile(buf); err != nil {
 				return err
 			}
 			continue
@@ -165,7 +165,7 @@ func implementationTwo(reader *bufio.Reader) error {
 			// Check to see if string continues without a newline char and
 			// setup the temp file for a continued string
 			if len(lines) == 1 && (string(lines[0]) != "") {
-				if err := tfi.initTempFile(lines[0]); err != nil {
+				if err := tfi.initOrAppendTempFile(lines[0]); err != nil {
 					return err
 				}
 				continue
@@ -176,7 +176,7 @@ func implementationTwo(reader *bufio.Reader) error {
 		// we will setup the temp file for the continued string
 		lastIndex := len(lines) - 1
 		if string(lines[lastIndex]) != "" {
-			if err := tfi.initTempFile(lines[lastIndex]); err != nil {
+			if err := tfi.initOrAppendTempFile(lines[lastIndex]); err != nil {
 				return err
 			}
 			lines = lines[:lastIndex]
@@ -196,7 +196,7 @@ func implementationTwo(reader *bufio.Reader) error {
 
 // Initialize a temp file if the file pointer has not been initialized yet
 // otherwise write to the temp file
-func (tfi *TempFileInfo) initTempFile(currentLine []byte) error {
+func (tfi *TempFileInfo) initOrAppendTempFile(currentLine []byte) error {
 	tfi.FileCreated = true
 	if !tfi.ErrorStringFound {
 		tfi.ErrorStringFound = bytes.Contains(currentLine, errorStringBytes)
